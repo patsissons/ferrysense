@@ -48,8 +48,8 @@ pnpm run web
 - `src/` - Application source code
   - `App.tsx` - Main application component
   - `routes/` - Screen components and navigation configuration
-    - `home/` - Home screen components and utilities
-      - `index.tsx` - Home screen component
+    - `ferry/` - Ferry screen components and utilities
+      - `index.tsx` - Ferry screen component
     - `profile/` - Profile screen components and utilities
       - `index.tsx` - Profile screen component
     - `settings/` - Settings screen components and utilities
@@ -61,7 +61,7 @@ pnpm run web
 ## Features
 
 - Material Design UI components with React Native Paper
-- Bottom navigation with three screens (Home, Profile, Settings)
+- Bottom navigation with three screens (Ferry, Profile, Settings)
 - TypeScript for type safety
 - Hermes engine for improved performance
 - Safe area handling for modern devices

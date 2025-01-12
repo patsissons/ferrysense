@@ -1,9 +1,9 @@
-export { HomeRoute } from './home';
+export { FerryRoute } from './ferry';
 export { ProfileRoute } from './profile';
 export { SettingsRoute } from './settings';
 
 export const routes = [
-  { key: 'home', title: 'Home', focusedIcon: 'home', unfocusedIcon: 'home-outline' },
-  { key: 'profile', title: 'Profile', focusedIcon: 'account', unfocusedIcon: 'account-outline' },
-  { key: 'settings', title: 'Settings', focusedIcon: 'cog', unfocusedIcon: 'cog-outline' },
+  { key: 'ferry', title: 'Ferry', focusedIcon: 'ferry', unfocusedIcon: 'ferry' },
+  { key: 'profile', title: 'Profile', focusedIcon: 'account', unfocusedIcon: 'account' },
+  { key: 'settings', title: 'Settings', focusedIcon: 'cog', unfocusedIcon: 'cog' },
 ];

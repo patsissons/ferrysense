@@ -2,9 +2,9 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 
-export const HomeRoute = () => (
+export const FerryRoute = () => (
   <View style={styles.container}>
-    <Text>Home Screen</Text>
+    <Text>Ferry Screen</Text>
   </View>
 );
 

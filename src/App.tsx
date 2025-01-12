@@ -3,13 +3,13 @@ import { StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PaperProvider, MD3LightTheme, BottomNavigation } from 'react-native-paper';
 import React from 'react';
-import { HomeRoute, ProfileRoute, SettingsRoute, routes } from './routes';
+import { FerryRoute, ProfileRoute, SettingsRoute, routes } from './routes';
 
 export default function App() {
   const [index, setIndex] = React.useState(0);
 
   const renderScene = BottomNavigation.SceneMap({
-    home: HomeRoute,
+    ferry: FerryRoute,
     profile: ProfileRoute,
     settings: SettingsRoute,
   });
@@ -22,6 +22,7 @@ export default function App() {
           navigationState={{ index, routes }}
           onIndexChange={setIndex}
           renderScene={renderScene}
+          activeColor="cornflowerblue"
         />
       </SafeAreaProvider>
     </PaperProvider>
