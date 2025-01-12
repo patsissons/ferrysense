@@ -45,9 +45,18 @@ pnpm run web
 
 ## Project Structure
 
-- `App.tsx` - Main application entry point
+- `src/` - Application source code
+  - `App.tsx` - Main application component
+  - `routes/` - Screen components and navigation configuration
+    - `home/` - Home screen components and utilities
+      - `index.tsx` - Home screen component
+    - `profile/` - Profile screen components and utilities
+      - `index.tsx` - Profile screen component
+    - `settings/` - Settings screen components and utilities
+      - `index.tsx` - Settings screen component
+    - `index.ts` - Route exports and configuration
 - `assets/` - Static assets like images and fonts
-- `app/` - Application source code
+- `index.ts` - Application entry point
 
 ## Features
 
