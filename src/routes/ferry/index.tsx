@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, Menu, Button, List, Surface, useTheme } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, Linking } from 'react-native';
+import { Text, Menu, Button, List, Surface, useTheme, Divider, MD3Theme } from 'react-native-paper';
 import { DatePickerInput } from 'react-native-paper-dates';
 import { en, registerTranslation } from 'react-native-paper-dates';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,15 +9,15 @@ import { format } from 'date-fns';
 registerTranslation('en', en);
 
 const terminals = [
-  { label: 'Tsawwassen', value: 'tsawwassen' },
-  { label: 'Swartz Bay', value: 'swartz' },
-  { label: 'Duke Point', value: 'duke' },
-  { label: 'Departure Bay', value: 'departure' },
-  { label: 'Horseshoe Bay', value: 'horseshoe' },
-  { label: 'Langdale', value: 'langdale' },
+  { label: 'Tsawwassen', value: 'TSA' },
+  { label: 'Swartz Bay', value: 'SWB' },
+  { label: 'Duke Point', value: 'DUK' },
+  { label: 'Departure Bay', value: 'NAN' },
+  { label: 'Horseshoe Bay', value: 'HSB' },
+  { label: 'Langdale', value: 'LNG' },
 ];
 
-// Mock sailing data - in a real app this would come from an API
+
 const mockSailings = [
   { departureTime: '6:00 AM', arrivalTime: '8:35 AM', vessel: 'Spirit of British Columbia', available: true },
   { departureTime: '8:00 AM', arrivalTime: '10:35 AM', vessel: 'Coastal Renaissance', available: true },
@@ -29,6 +29,135 @@ const mockSailings = [
   { departureTime: '8:00 PM', arrivalTime: '10:35 PM', vessel: 'Coastal Renaissance', available: true },
 ];
 
+const mockSailingWithDetails = mockSailings.map((sailing, i) => ({
+  id: String(i + 1),
+  ...sailing,
+  capacity: '85%',
+  checkInBy: '5:30 AM',
+  currentConditions: 'On Time',
+  vesselInfo: {
+    built: 1993,
+    length: '167m',
+    capacity: '2100 passengers and crew',
+    vehicles: '358 vehicles',
+    amenities: ['Coastal Cafe', 'Seawest Lounge', 'Kids Play Area', 'Gift Shop'],
+    status: 'In Service',
+  },
+  routeInfo: {
+    distance: '24 nautical miles',
+    duration: '1 hour 35 minutes',
+    checkInLocation: 'Terminal 1',
+    parking: 'Long-term parking available',
+  },
+}));
+
+interface SailingDetailsProps {
+  departureTerminal: string;
+  arrivalTerminal: string;
+  sailing: typeof mockSailingWithDetails[0];
+  theme: MD3Theme;
+}
+
+const SailingDetails: React.FC<SailingDetailsProps> = ({ departureTerminal, arrivalTerminal, sailing, theme }) => {
+  const openBookingPage = () => {
+    Linking.openURL(`https://www.bcferries.com/?sailing=true&departureLocation=${departureTerminal}&arrivalLocation=${arrivalTerminal}`);
+  };
+
+  const openCurrentConditionsPage = () => {
+    // https://www.bcferries.com/routes-fares/schedules/seasonal/HSB-LNG
+    Linking.openURL(`https://www.bcferries.com/routes-fares/schedules/seasonal/${departureTerminal}-${arrivalTerminal}`);
+  };
+
+  return (
+    <View style={styles.sailingDetails}>
+      <Divider />
+
+      {/* Actions */}
+      <View style={styles.actionsContainer}>
+        <Button
+          mode="contained"
+          onPress={openBookingPage}
+          icon="ferry"
+          style={styles.actionButton}
+        >
+          Book on BC Ferries
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={openCurrentConditionsPage}
+          icon="information"
+          style={styles.actionButton}
+        >
+          View Current Conditions
+        </Button>
+      </View>
+
+      {/* Status Section */}
+      <View style={styles.detailSection}>
+        <Text variant="titleSmall" style={styles.sectionTitle}>Status</Text>
+        <View style={styles.detailRow}>
+          <Text>Current Status: </Text>
+          <Text style={{ color: theme.colors.primary }}>{sailing.currentConditions}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text>Capacity: </Text>
+          <Text>{sailing.capacity}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text>Check-in by: </Text>
+          <Text style={{ fontWeight: '500' }}>{sailing.checkInBy}</Text>
+        </View>
+      </View>
+
+      {/* Vessel Information */}
+      <View style={styles.detailSection}>
+        <Text variant="titleSmall" style={styles.sectionTitle}>Vessel Information</Text>
+        <View style={styles.detailRow}>
+          <Text>Built: </Text>
+          <Text>{sailing.vesselInfo.built}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text>Capacity: </Text>
+          <Text>{sailing.vesselInfo.capacity}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text>Vehicle Spaces: </Text>
+          <Text>{sailing.vesselInfo.vehicles}</Text>
+        </View>
+        <View style={styles.amenitiesList}>
+          <Text style={{ marginBottom: 4 }}>Amenities:</Text>
+          {sailing.vesselInfo.amenities.map((amenity, index) => (
+            <View key={index} style={styles.amenityItem}>
+              <Text>• {amenity}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      {/* Route Information */}
+      <View style={styles.detailSection}>
+        <Text variant="titleSmall" style={styles.sectionTitle}>Route Information</Text>
+        <View style={styles.detailRow}>
+          <Text>Distance: </Text>
+          <Text>{sailing.routeInfo.distance}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text>Duration: </Text>
+          <Text>{sailing.routeInfo.duration}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text>Check-in: </Text>
+          <Text>{sailing.routeInfo.checkInLocation}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text>Parking: </Text>
+          <Text>{sailing.routeInfo.parking}</Text>
+        </View>
+      </View>
+    </View>
+  );
+};
+
 export const FerryRoute = () => {
   const theme = useTheme();
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -36,9 +165,10 @@ export const FerryRoute = () => {
   const [showArrivalMenu, setShowArrivalMenu] = React.useState(false);
   const [departureTerminal, setDepartureTerminal] = React.useState(terminals[0]);
   const [arrivalTerminal, setArrivalTerminal] = React.useState(terminals[1]);
+  const [expandedId, setExpandedId] = React.useState<string | null>(null);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['left', 'top', 'right']}>
       <Surface style={styles.header} elevation={2}>
         <View style={styles.datePickerContainer}>
           <DatePickerInput
@@ -58,7 +188,7 @@ export const FerryRoute = () => {
               onDismiss={() => setShowDepartureMenu(false)}
               anchor={
                 <Button
-                  mode="outlined"
+                  mode="contained"
                   onPress={() => setShowDepartureMenu(true)}
                 >
                   {departureTerminal.label}
@@ -68,6 +198,7 @@ export const FerryRoute = () => {
               {terminals.map((terminal) => (
                 <Menu.Item
                   key={terminal.value}
+                  disabled={terminal.value === arrivalTerminal.value}
                   onPress={() => {
                     setDepartureTerminal(terminal);
                     setShowDepartureMenu(false);
@@ -83,7 +214,7 @@ export const FerryRoute = () => {
               onDismiss={() => setShowArrivalMenu(false)}
               anchor={
                 <Button
-                  mode="outlined"
+                  mode="contained"
                   onPress={() => setShowArrivalMenu(true)}
                 >
                   {arrivalTerminal.label}
@@ -93,6 +224,7 @@ export const FerryRoute = () => {
               {terminals.map((terminal) => (
                 <Menu.Item
                   key={terminal.value}
+                  disabled={terminal.value === departureTerminal.value}
                   onPress={() => {
                     setArrivalTerminal(terminal);
                     setShowArrivalMenu(false);
@@ -114,9 +246,12 @@ export const FerryRoute = () => {
           </Text>
         </View>
         <List.Section>
-          {mockSailings.map((sailing, index) => (
-            <List.Item
-              key={index}
+          {mockSailingWithDetails.map((sailing) => (
+            <List.Accordion
+              key={sailing.id}
+              id={sailing.id}
+              expanded={expandedId === sailing.id}
+              onPress={() => setExpandedId(expandedId === sailing.id ? null : sailing.id)}
               title={`${sailing.departureTime} → ${sailing.arrivalTime}`}
               description={sailing.vessel}
               left={props => <List.Icon {...props} icon="ferry" />}
@@ -131,8 +266,9 @@ export const FerryRoute = () => {
                   {sailing.available ? 'Available' : 'Full'}
                 </Text>
               )}
-              style={styles.sailingItem}
-            />
+            >
+              <SailingDetails departureTerminal={departureTerminal.value} arrivalTerminal={arrivalTerminal.value} sailing={sailing} theme={theme} />
+            </List.Accordion>
           ))}
         </List.Section>
       </ScrollView>
@@ -145,8 +281,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingVertical: 16,
-    paddingHorizontal: 16,
+    padding: 16,
     rowGap: 8,
   },
   datePickerContainer: {
@@ -166,11 +301,39 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 4,
   },
-  sailingItem: {
-    paddingHorizontal: 16,
-  },
   availabilityText: {
     alignSelf: 'center',
     fontWeight: '500',
+  },
+  sailingDetails: {
+    padding: 16,
+    paddingTop: 0,
+    gap: 16,
+  },
+  detailSection: {
+    gap: 8,
+  },
+  sectionTitle: {
+    fontWeight: '500',
+    marginBottom: 4,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  amenitiesList: {
+    marginTop: 4,
+  },
+  amenityItem: {
+    paddingLeft: 8,
+    marginVertical: 2,
+  },
+  actionsContainer: {
+    gap: 8,
+    marginTop: 8,
+  },
+  actionButton: {
+    borderRadius: 8,
   },
 });
